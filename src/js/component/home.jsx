@@ -70,8 +70,21 @@ const Home = () => {
 	}
 
 
-	const deleteTask = (index) => {
-		setTasks(tasks.filter((_, newIndex) => newIndex !== index))
+	const deleteTask = async (index) => {
+		try {
+			const response = await fetch(`${apiURL}/todos/${index}`,
+				{
+					method: "DELETE"
+				})
+			if (!response.ok) {
+				throw new Error("error eliminando el contacto");
+			}
+
+			setTasks(tasks.filter((task) => task.id !== index))
+		} catch (error) {
+			console.log(error);
+		}
+
 	}
 	useEffect(() => {
 		createUser();
@@ -93,7 +106,7 @@ const Home = () => {
 				type="text" className="form-control" placeholder="Tareas pendientes" aria-label="Username" aria-describedby="basic-addon1" />
 			<ul>
 				{
-					tasks && tasks.length > 0 ? tasks.map((task) => (<li key={task.id}>{task.label} <button onClick={() => deleteTask(task.id)} className="btn btn-danger"><i class="fas fa-trash"></i></button> </li>)) :
+					tasks && tasks.length > 0 ? tasks.map((task) => (<li key={task.id}>{task.label} <button onClick={() => deleteTask(task.id)} className="btn btn-danger"><i className="fas fa-trash"></i></button> </li>)) :
 						<li>No hay tareas</li>
 				}
 
